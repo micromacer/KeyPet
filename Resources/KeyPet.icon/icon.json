@@ -1,0 +1,60 @@
+{
+  "fill" : {
+    "automatic-gradient" : "extended-srgb:0.36078,0.68235,0.94118,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "01-keyboard.svg",
+          "name" : "01-keyboard",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              20,
+              -7
+            ]
+          }
+        }
+      ],
+      "name" : "01 Keyboard",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.3
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.12
+      }
+    },
+    {
+      "layers" : [
+        {
+          "image-name" : "02-paw.svg",
+          "name" : "02-paw",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              20,
+              -7
+            ]
+          }
+        }
+      ],
+      "name" : "02 Paw",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.3
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.08
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "macOS"
+    ]
+  }
+}
