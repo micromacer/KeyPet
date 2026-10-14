@@ -39,6 +39,15 @@
 !/Sources/Input/KeyboardMonitor.swift
 !/Sources/Input/PetInputStateMachine.swift
 !/Sources/Input/PetKeyMapping.swift
+!/Sources/Input/RhythmDetector.swift
+!/Sources/Input/SystemAudioMonitor.swift
+!/Resources/en.lproj/InfoPlist.strings
+!/Resources/ja.lproj/InfoPlist.strings
+!/Resources/zh-Hans.lproj/InfoPlist.strings
+!/Resources/zh-Hant.lproj/InfoPlist.strings
+!/Verification/RhythmChecks.swift
+!/Verification/README.md
+!/BuildSupport/verify-rhythm.sh
 !/demo/pet-idle.png
 !/demo/pet-left.png
 !/demo/pet-right.png

@@ -2,8 +2,8 @@
 "petMenu" = "Pets";
 "hidePet" = "Hide Pet";
 "showPet" = "Show Pet";
-"pause" = "Pause Keyboard Response";
-"resume" = "Resume Keyboard Response";
+"pause" = "Pause Responses";
+"resume" = "Resume Responses";
 "size" = "Size";
 "opacity" = "Opacity";
 "resetDelay" = "Limb Reset Delay";
@@ -12,7 +12,7 @@
 "shadowOpacity" = "Shadow Opacity";
 "flip" = "Flip Horizontally";
 "swap" = "Swap Left and Right Responses";
-"bounce" = "Bounce on Key Press";
+"bounce" = "Bounce on Trigger";
 "frameRate" = "Animation Frame Rate";
 "alwaysOnTop" = "Always on Top";
 "clickThrough" = "Ignore Mouse Clicks";
@@ -47,7 +47,7 @@
 "switchFailureStatus" = "Unable to switch to “%1$@”: %2$@";
 "switchFailureTitle" = "Unable to Switch to “%1$@”";
 "switchFailureMessage" = "%1$@\nCheck the images and try again.";
-"pausedStatus" = "%1$@. Keyboard response paused.";
+"pausedStatus" = "%1$@. Responses paused.";
 "fileError" = "%1$@: %2$@";
 "fileTooLarge" = "File exceeds 64 MiB";
 "canvasTooLarge" = "Canvas exceeds 2048 px";
@@ -74,3 +74,26 @@
 "restartMessage" = "The new language takes effect the next time KeyPet launches.";
 "restartNow" = "Restart Now";
 "restartLater" = "Later";
+
+/* Experimental system-audio rhythm. */
+"experimentalFeatures" = "Experimental Features";
+"musicRhythm" = "Music Rhythm";
+"musicSensitivity" = "Sensitivity";
+"sensitivityLow" = "Low";
+"sensitivityStandard" = "Standard";
+"sensitivityHigh" = "High";
+"audioPermissionSettings" = "Open Audio Permission Settings…";
+"musicStatus" = "Status: %1$@";
+"musicOff" = "Off";
+"musicStarting" = "Starting…";
+"musicWaiting" = "Waiting for audio";
+"musicResponding" = "Responding to system audio";
+"musicPausedByUser" = "Paused: responses are paused";
+"musicHidden" = "Paused: pet is hidden";
+"musicSleeping" = "Paused: Mac is sleeping";
+"musicScreenSleeping" = "Paused: display is sleeping";
+"musicSessionInactive" = "Paused: session is inactive";
+"musicPetUnavailable" = "Paused: pet assets are unavailable";
+"musicNotVisible" = "Paused: pet is not visible";
+"musicCaptureFailed" = "Audio capture failed (error %1$d). Check audio permission.";
+"musicUnsupportedFormat" = "Audio format is unsupported";

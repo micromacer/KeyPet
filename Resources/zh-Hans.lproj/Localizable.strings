@@ -12,7 +12,7 @@
 "shadowOpacity" = "阴影不透明度";
 "flip" = "水平翻转";
 "swap" = "交换左右响应";
-"bounce" = "按键时晃动";
+"bounce" = "触发时晃动";
 "frameRate" = "动画刷新率";
 "alwaysOnTop" = "始终置顶";
 "clickThrough" = "鼠标穿透";
@@ -74,3 +74,26 @@
 "restartMessage" = "新语言将在下次启动 KeyPet 时生效。";
 "restartNow" = "立即重启";
 "restartLater" = "稍后";
+
+/* Experimental system-audio rhythm. */
+"experimentalFeatures" = "实验性功能";
+"musicRhythm" = "音乐律动";
+"musicSensitivity" = "灵敏度";
+"sensitivityLow" = "低";
+"sensitivityStandard" = "标准";
+"sensitivityHigh" = "高";
+"audioPermissionSettings" = "打开音频权限设置…";
+"musicStatus" = "状态：%1$@";
+"musicOff" = "关闭";
+"musicStarting" = "启动中…";
+"musicWaiting" = "等待音频";
+"musicResponding" = "正在响应系统音频";
+"musicPausedByUser" = "已暂停：暂停响应";
+"musicHidden" = "已暂停：桌宠隐藏";
+"musicSleeping" = "已暂停：系统睡眠";
+"musicScreenSleeping" = "已暂停：显示器休眠";
+"musicSessionInactive" = "已暂停：会话未激活";
+"musicPetUnavailable" = "已暂停：宠物素材不可用";
+"musicNotVisible" = "已暂停：桌宠不可见";
+"musicCaptureFailed" = "音频采集失败（错误 %1$d），请检查音频权限";
+"musicUnsupportedFormat" = "不支持当前音频格式";

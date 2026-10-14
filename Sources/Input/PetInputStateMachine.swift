@@ -22,7 +22,7 @@ final class PetInputStateMachine {
     /// `restartSerial` increases on every emission so unchanged tokens still restart.
     var onSelection: (@MainActor (PlaybackSelection) -> Void)?
 
-    /// Emitted once per genuine new key press; never on auto-repeat or re-selection.
+    /// Emitted for a new key press or rhythm pulse; never on auto-repeat.
     var onBounce: (@MainActor () -> Void)?
 
     var heldKeyCount: Int { heldKeys.count }
@@ -64,6 +64,15 @@ final class PetInputStateMachine {
         case (.up, _):
             handleRelease(event)
         }
+    }
+
+    /// Music and keyboard are exclusive at the app boundary, so a pulse needs
+    /// no synthetic key or held-key entry. It shares the paw and reset behavior.
+    func handleRhythmPulse() {
+        cancelPendingReset()
+        emitSelection(fallbackToken(defaultSide: nil))
+        onBounce?()
+        scheduleReset()
     }
 
     /// Pause / hide / pet switch / monitor interruption: drop every held key, cancel

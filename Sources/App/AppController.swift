@@ -10,6 +10,11 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var startupCompleted = false
     private let lifecycle = LifecycleController()
     private let monitor = KeyboardMonitor()
+    private let audioMonitor = SystemAudioMonitor()
+    private enum ResponseMode { case keyboard, music }
+    private var responseMode = ResponseMode.keyboard
+    private var listeningMode: ResponseMode?
+    private var audioFailure: AudioCaptureFailure?
     private let stateMachine = PetInputStateMachine()
     private let cache = PetFrameCache()
     private let renderer = PetRenderer()
@@ -22,6 +27,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var menuItems: [String: NSMenuItem] = [:]
     private var petSubmenu: NSMenu?
     private var frameRateItems: [NSMenuItem] = []
+    private var sensitivityItems: [NSMenuItem] = []
     private var languageItems: [NSMenuItem] = []
     /// Languages shipped in the bundle; menu labels stay in their own language.
     private static let supportedLanguages = ["en", "ja", "zh-Hant", "zh-Hans"]
@@ -66,7 +72,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         stateMachine.onSelection = { [weak self] selection in self?.playback.show(selection) }
         stateMachine.onBounce = { [weak self] in self?.playback.triggerBounce() }
         monitor.onEvent = { [weak self] event in
-            guard let self, self.active else { return }
+            guard let self, self.active, self.responseMode == .keyboard else { return }
             self.stateMachine.handle(event)
         }
         monitor.onReset = { [weak self] in
@@ -74,6 +80,21 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.playback.showIdle()
         }
         monitor.onStatusChange = { [weak self] _ in self?.refreshMenu() }
+        audioMonitor.onPulse = { [weak self] _ in
+            guard let self, self.active, self.responseMode == .music else { return }
+            self.stateMachine.handleRhythmPulse()
+        }
+        audioMonitor.onStatusChange = { [weak self] status in
+            guard let self else { return }
+            if case .failed(let failure) = status, self.responseMode == .music {
+                self.audioFailure = failure
+                self.responseMode = .keyboard
+                self.updateActivity()
+                self.refreshMenu()
+            } else {
+                self.refreshMusicMenu()
+            }
+        }
         lifecycle.onChange = { [weak self] in self?.updateActivity() }
         library.onChange = { [weak self] in self?.libraryChanged() }
         buildMenu()
@@ -89,16 +110,23 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private func updateActivity() {
         let shouldBeActive = lifecycle.allowsActivity && windowController.isActuallyVisible
             && currentPet != nil && !degraded
-        guard shouldBeActive != active else { return }
         active = shouldBeActive
-        if active {
-            monitor.start()
-            playback.setActive(true)
-        } else {
+        playback.setActive(active)
+        // Mode changes need coordination even when visibility/activity is unchanged.
+        let desiredMode: ResponseMode? = active ? responseMode : nil
+        if desiredMode != listeningMode {
+            listeningMode = desiredMode
             monitor.stop()
+            audioMonitor.stop()
             stateMachine.reset()
-            playback.setActive(false)
+            if active { playback.showIdle() }
+            switch desiredMode {
+            case .keyboard: monitor.start()
+            case .music: audioMonitor.start(sensitivity: preferences.rhythmSensitivity)
+            case nil: break
+            }
         }
+        refreshMusicMenu()
     }
 
     private func updateDecodeTarget() {
@@ -116,7 +144,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func libraryChanged() {
         rebuildPetSubmenu()
-        guard library.rootURL != nil else { currentPet = nil; refreshMenu(); return }
+        guard library.rootURL != nil else { currentPet = nil; updateActivity(); refreshMenu(); return }
         if let current = currentPet {
             if let updated = library.pets.first(where: { $0.id == current.id }), !isBlocking(id: current.id) {
                 if degraded || updated.assets != current.assets {
@@ -342,6 +370,34 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             choice.target = self; choice.tag = fps; rateMenu.addItem(choice); frameRateItems.append(choice)
         }
         rateItem.submenu = rateMenu; menu.addItem(rateItem)
+        let experimentalItem = NSMenuItem(title: L10n.experimentalFeatures.text, action: nil, keyEquivalent: "")
+        let experimentalMenu = NSMenu()
+        experimentalMenu.autoenablesItems = false
+        experimentalMenu.delegate = self
+        add("music", L10n.musicRhythm.text, #selector(toggleMusicRhythm), to: experimentalMenu)
+        let sensitivityItem = NSMenuItem(title: L10n.musicSensitivity.text, action: nil, keyEquivalent: "")
+        let sensitivityMenu = NSMenu()
+        for sensitivity in RhythmSensitivity.allCases {
+            let label: L10n
+            switch sensitivity {
+            case .low: label = .sensitivityLow
+            case .standard: label = .sensitivityStandard
+            case .high: label = .sensitivityHigh
+            }
+            let choice = NSMenuItem(title: label.text, action: #selector(changeMusicSensitivity(_:)), keyEquivalent: "")
+            choice.target = self; choice.tag = sensitivity.rawValue
+            sensitivityMenu.addItem(choice); sensitivityItems.append(choice)
+        }
+        sensitivityItem.submenu = sensitivityMenu
+        experimentalMenu.addItem(sensitivityItem)
+        experimentalMenu.addItem(.separator())
+        let musicStatus = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+        musicStatus.isEnabled = false
+        menuItems["musicStatus"] = musicStatus
+        experimentalMenu.addItem(musicStatus)
+        add("audioSettings", L10n.audioPermissionSettings.text, #selector(openAudioPermissionSettings), to: experimentalMenu)
+        experimentalItem.submenu = experimentalMenu
+        menu.addItem(experimentalItem)
         menu.addItem(.separator())
         add("top", L10n.alwaysOnTop.text, #selector(toggleTop), to: menu)
         add("through", L10n.clickThrough.text, #selector(toggleThrough), to: menu)
@@ -425,9 +481,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         refreshMenu()
         // FSEvents can lag on external or network volumes; opening the menu is
         // a natural moment to double-check.
-        library.requestRescan()
+        if menu === statusItem?.menu { library.requestRescan() }
     }
     func menuDidClose(_ menu: NSMenu) {
+        guard menu === statusItem?.menu else { return }
         windowController.saveOpacity()
         windowController.saveGeometry()
         preferences.resetDelayMs = pendingResetDelayMs
@@ -469,7 +526,47 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menuItems["keyboardAction"]?.isHidden = false
             menuItems["keyboardAction"]?.title = granted ? L10n.enableKeyboard.text : L10n.allowKeyboard.text
         }
+        if responseMode == .music { menuItems["keyboardAction"]?.isHidden = true }
+        refreshMusicMenu()
         rebuildPetSubmenuCheckmarks()
+    }
+
+    private func refreshMusicMenu() {
+        menuItems["music"]?.state = responseMode == .music ? .on : .off
+        menuItems["music"]?.isEnabled = responseMode == .music || (startupCompleted && currentPet != nil && !degraded)
+        for item in sensitivityItems {
+            item.state = item.tag == preferences.rhythmSensitivity.rawValue ? .on : .off
+        }
+        let text: String
+        if let audioFailure {
+            switch audioFailure {
+            case .system(let code): text = L10n.musicCaptureFailed.format(code)
+            case .unsupportedFormat: text = L10n.musicUnsupportedFormat.text
+            }
+        } else if responseMode == .keyboard {
+            text = L10n.musicOff.text
+        } else if lifecycle.paused {
+            text = L10n.musicPausedByUser.text
+        } else if lifecycle.hidden {
+            text = L10n.musicHidden.text
+        } else if lifecycle.sleeping {
+            text = L10n.musicSleeping.text
+        } else if lifecycle.screensSleeping {
+            text = L10n.musicScreenSleeping.text
+        } else if lifecycle.sessionInactive {
+            text = L10n.musicSessionInactive.text
+        } else if currentPet == nil || degraded {
+            text = L10n.musicPetUnavailable.text
+        } else if !active {
+            text = L10n.musicNotVisible.text
+        } else {
+            switch audioMonitor.status {
+            case .starting: text = L10n.musicStarting.text
+            case .responding: text = L10n.musicResponding.text
+            default: text = L10n.musicWaiting.text
+            }
+        }
+        menuItems["musicStatus"]?.title = L10n.musicStatus.format(text)
     }
 
     private func rebuildPetSubmenuCheckmarks() {
@@ -522,6 +619,21 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         preferences.frameRate = sender.tag
         playback.frameRate = sender.tag
         refreshMenu()
+    }
+    @objc private func toggleMusicRhythm() {
+        responseMode = responseMode == .music ? .keyboard : .music
+        audioFailure = nil
+        updateActivity()
+        refreshMenu()
+    }
+    @objc private func changeMusicSensitivity(_ sender: NSMenuItem) {
+        guard let sensitivity = RhythmSensitivity(rawValue: sender.tag) else { return }
+        preferences.rhythmSensitivity = sensitivity
+        audioMonitor.setSensitivity(sensitivity)
+        refreshMusicMenu()
+    }
+    @objc private func openAudioPermissionSettings() {
+        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
     }
     /// The pending selection lives in AppleLanguages, the same per-app
     /// override System Settings writes. It is read from the application
@@ -610,6 +722,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
     @objc private func rescan() { library.requestRescan() }
     @objc private func keyboardAccess() {
+        guard responseMode == .keyboard else { return }
         if !startupCompleted {
             continueStartup()
         } else if KeyboardMonitor.permissionGranted {
@@ -617,7 +730,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } else {
             permissionController.show { [weak self] in
                 guard let self else { return }
-                if self.active { self.monitor.start() }
+                if self.active, self.responseMode == .keyboard { self.monitor.start() }
                 self.refreshMenu()
             }
         }
@@ -661,7 +774,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func applyDefaultOptions() {
+        responseMode = .keyboard
+        audioFailure = nil
         preferences.restoreDefaults()
+        audioMonitor.setSensitivity(preferences.rhythmSensitivity)
         stateMachine.reset()
         stateMachine.swapSides = preferences.swapSides
         pendingResetDelayMs = preferences.resetDelayMs
@@ -696,6 +812,7 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         preferences.shadowOpacity = pendingShadowOpacity
         permissionController.dismiss()
         monitor.stop()
+        audioMonitor.shutdown()
         playback.stopAll()
         library.stop()
         lifecycle.cleanup()

@@ -18,6 +18,7 @@ final class PreferencesStore {
         "swapSides": false, "alwaysOnTop": true, "resetDelayMs": defaultResetDelayMs,
         "bounceEnabled": true, "frameRate": 60, "clickThrough": false,
         "shadowEnabled": false, "shadowRadius": defaultShadowRadius, "shadowOpacity": defaultShadowOpacity,
+        "experimentalMusicSensitivity": RhythmSensitivity.standard.rawValue,
     ]
     private let defaults: UserDefaults
 
@@ -51,6 +52,10 @@ final class PreferencesStore {
     var alwaysOnTop: Bool { get { defaults.bool(forKey: "alwaysOnTop") } set { defaults.set(newValue, forKey: "alwaysOnTop") } }
     var bounceEnabled: Bool { get { defaults.bool(forKey: "bounceEnabled") } set { defaults.set(newValue, forKey: "bounceEnabled") } }
     var clickThrough: Bool { get { defaults.bool(forKey: "clickThrough") } set { defaults.set(newValue, forKey: "clickThrough") } }
+    var rhythmSensitivity: RhythmSensitivity {
+        get { RhythmSensitivity(rawValue: defaults.integer(forKey: "experimentalMusicSensitivity")) ?? .standard }
+        set { defaults.set(newValue.rawValue, forKey: "experimentalMusicSensitivity") }
+    }
     var resetDelayMs: Int {
         get {
             let value = defaults.integer(forKey: "resetDelayMs")

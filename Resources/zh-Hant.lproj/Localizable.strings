@@ -2,8 +2,8 @@
 "petMenu" = "寵物";
 "hidePet" = "隱藏桌寵";
 "showPet" = "顯示桌寵";
-"pause" = "暫停鍵盤回應";
-"resume" = "繼續鍵盤回應";
+"pause" = "暫停回應";
+"resume" = "繼續回應";
 "size" = "大小";
 "opacity" = "不透明度";
 "resetDelay" = "肢體復位時間";
@@ -12,7 +12,7 @@
 "shadowOpacity" = "陰影不透明度";
 "flip" = "水平翻轉";
 "swap" = "交換左右回應";
-"bounce" = "按鍵時晃動";
+"bounce" = "觸發時晃動";
 "frameRate" = "動畫更新率";
 "alwaysOnTop" = "永遠置頂";
 "clickThrough" = "滑鼠穿透";
@@ -47,7 +47,7 @@
 "switchFailureStatus" = "無法切換至「%1$@」：%2$@";
 "switchFailureTitle" = "無法切換至「%1$@」";
 "switchFailureMessage" = "%1$@\n請檢查圖片後再試一次。";
-"pausedStatus" = "%1$@，已暫停鍵盤回應";
+"pausedStatus" = "%1$@，已暫停回應";
 "fileError" = "%1$@：%2$@";
 "fileTooLarge" = "檔案超過 64 MiB";
 "canvasTooLarge" = "畫布超過 2048 px";
@@ -74,3 +74,26 @@
 "restartMessage" = "新語言會在下次啟動 KeyPet 時生效。";
 "restartNow" = "立即重新啟動";
 "restartLater" = "稍後";
+
+/* Experimental system-audio rhythm. */
+"experimentalFeatures" = "實驗性功能";
+"musicRhythm" = "音樂律動";
+"musicSensitivity" = "靈敏度";
+"sensitivityLow" = "低";
+"sensitivityStandard" = "標準";
+"sensitivityHigh" = "高";
+"audioPermissionSettings" = "開啟音訊權限設定…";
+"musicStatus" = "狀態：%1$@";
+"musicOff" = "關閉";
+"musicStarting" = "啟動中…";
+"musicWaiting" = "等待音訊";
+"musicResponding" = "正在回應系統音訊";
+"musicPausedByUser" = "已暫停：暫停回應";
+"musicHidden" = "已暫停：桌寵隱藏";
+"musicSleeping" = "已暫停：系統睡眠";
+"musicScreenSleeping" = "已暫停：顯示器休眠";
+"musicSessionInactive" = "已暫停：工作階段未啟用";
+"musicPetUnavailable" = "已暫停：寵物素材無法使用";
+"musicNotVisible" = "已暫停：桌寵不可見";
+"musicCaptureFailed" = "音訊擷取失敗（錯誤 %1$d），請檢查音訊權限";
+"musicUnsupportedFormat" = "不支援目前的音訊格式";

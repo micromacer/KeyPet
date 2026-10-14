@@ -15,4 +15,5 @@
     <key>LSUIElement</key><true/>
     <key>NSHighResolutionCapable</key><true/>
     <key>NSPrincipalClass</key><string>NSApplication</string>
+    <key>NSAudioCaptureUsageDescription</key><string>KeyPet analyzes system audio locally to make your pet move with sound. Audio is not saved or uploaded.</string>
 </dict></plist>

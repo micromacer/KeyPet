@@ -2,8 +2,8 @@
 "petMenu" = "ペット";
 "hidePet" = "ペットを隠す";
 "showPet" = "ペットを表示";
-"pause" = "キー入力への反応を一時停止";
-"resume" = "キー入力への反応を再開";
+"pause" = "反応を一時停止";
+"resume" = "反応を再開";
 "size" = "サイズ";
 "opacity" = "不透明度";
 "resetDelay" = "手足が戻るまでの時間";
@@ -12,7 +12,7 @@
 "shadowOpacity" = "影の不透明度";
 "flip" = "左右反転";
 "swap" = "左右の反応を入れ替える";
-"bounce" = "キー入力時に揺らす";
+"bounce" = "反応時に揺らす";
 "frameRate" = "アニメーションのフレームレート";
 "alwaysOnTop" = "常に最前面に表示";
 "clickThrough" = "マウス操作を背後に通す";
@@ -47,7 +47,7 @@
 "switchFailureStatus" = "「%1$@」に切り替えられません：%2$@";
 "switchFailureTitle" = "「%1$@」に切り替えられません";
 "switchFailureMessage" = "%1$@\n画像を確認してから、もう一度お試しください。";
-"pausedStatus" = "%1$@。キー入力への反応を一時停止しました。";
+"pausedStatus" = "%1$@。反応を一時停止しました。";
 "fileError" = "%1$@：%2$@";
 "fileTooLarge" = "ファイルサイズが64 MiBを超えています";
 "canvasTooLarge" = "キャンバスのサイズが2048 pxを超えています";
@@ -74,3 +74,26 @@
 "restartMessage" = "新しい言語はKeyPetを次回起動したときに適用されます。";
 "restartNow" = "今すぐ再起動";
 "restartLater" = "あとで";
+
+/* Experimental system-audio rhythm. */
+"experimentalFeatures" = "実験的な機能";
+"musicRhythm" = "音楽に合わせて動く";
+"musicSensitivity" = "感度";
+"sensitivityLow" = "低";
+"sensitivityStandard" = "標準";
+"sensitivityHigh" = "高";
+"audioPermissionSettings" = "音声のアクセス許可設定を開く…";
+"musicStatus" = "状態：%1$@";
+"musicOff" = "オフ";
+"musicStarting" = "起動中…";
+"musicWaiting" = "音声を待機中";
+"musicResponding" = "システム音声に反応中";
+"musicPausedByUser" = "一時停止中：反応が停止されています";
+"musicHidden" = "一時停止中：ペットが非表示です";
+"musicSleeping" = "一時停止中：Macがスリープ中です";
+"musicScreenSleeping" = "一時停止中：画面がスリープ中です";
+"musicSessionInactive" = "一時停止中：セッションが非アクティブです";
+"musicPetUnavailable" = "一時停止中：ペットの素材を利用できません";
+"musicNotVisible" = "一時停止中：ペットが表示されていません";
+"musicCaptureFailed" = "音声の取得に失敗（エラー %1$d）。アクセス許可を確認してください。";
+"musicUnsupportedFormat" = "対応していない音声形式です";

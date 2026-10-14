@@ -17,6 +17,10 @@ enum L10n: String, CaseIterable {
     case unreadableDirectory, missingIdle, missingActions, tokenConflict, oversizedFile, oversizedCanvas, excessiveFrames
     case listSeparator, petAccessibilityHelp, points, milliseconds, percentage, framesPerSecond
     case languageMenu, followSystem, restartTitle, restartMessage, restartNow, restartLater
+    case experimentalFeatures, musicRhythm, musicSensitivity, sensitivityLow, sensitivityStandard, sensitivityHigh
+    case audioPermissionSettings, musicStatus, musicOff, musicStarting, musicWaiting, musicResponding
+    case musicPausedByUser, musicHidden, musicSleeping, musicScreenSleeping, musicSessionInactive
+    case musicPetUnavailable, musicNotVisible, musicCaptureFailed, musicUnsupportedFormat
 
     static let locale = Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en")
 
