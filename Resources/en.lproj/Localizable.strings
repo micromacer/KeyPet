@@ -36,6 +36,7 @@
 "permissionLater" = "Later";
 "permissionMissing" = "Input Monitoring permission has not been detected. Enable KeyPet in System Settings → Privacy & Security → Input Monitoring, then click “Continue After Allowing Access”. If macOS asks you to quit and reopen the app, follow its instructions.";
 "aboutMessage" = "A desktop pet that reacts to your keystrokes.\n\nBy Micromacer";
+"viewOnGitHub" = "View on GitHub";
 "ok" = "OK";
 "cancel" = "Cancel";
 "restoreTitle" = "Restore All Options to Their Defaults?";

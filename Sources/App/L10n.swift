@@ -10,7 +10,7 @@ enum L10n: String, CaseIterable {
     case noPets, chooseRoot, revealRoot, rescan, choose, chooseRootMessage
     case allowKeyboard, enableKeyboard, retryKeyboard
     case permissionTitle, permissionMessage, permissionAllow, permissionContinue, permissionLater, permissionMissing
-    case aboutMessage, ok, cancel, restoreTitle, restoreMessage, restoreConfirm
+    case aboutMessage, viewOnGitHub, ok, cancel, restoreTitle, restoreMessage, restoreConfirm
     case currentAssetUnreadable, petUnavailable, missingReadableIdle
     case switchFailureStatus, switchFailureTitle, switchFailureMessage, pausedStatus, fileError
     case fileTooLarge, canvasTooLarge, tooManyFrames, notPNG, unreadableFile, corruptImage

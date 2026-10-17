@@ -36,6 +36,7 @@
 "permissionLater" = "稍後";
 "permissionMissing" = "尚未偵測到輸入監控授權。請在「系統設定 → 隱私權與安全性 → 輸入監控」中開啟 KeyPet，再按一下「已授權，繼續」。如果系統要求結束並重新開啟 App，請依照系統提示操作。";
 "aboutMessage" = "隨著鍵盤輸入做出對應動作的桌面寵物。\n\nBy Micromacer";
+"viewOnGitHub" = "在 GitHub 上檢視";
 "ok" = "好";
 "cancel" = "取消";
 "restoreTitle" = "要將所有選項回復為預設值嗎？";

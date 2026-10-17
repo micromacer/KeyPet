@@ -46,8 +46,10 @@
 !/Resources/zh-Hans.lproj/InfoPlist.strings
 !/Resources/zh-Hant.lproj/InfoPlist.strings
 !/Verification/RhythmChecks.swift
+!/Verification/PetSwitchChecks.swift
 !/Verification/README.md
 !/BuildSupport/verify-rhythm.sh
+!/BuildSupport/verify-pet-switch.sh
 !/demo/pet-idle.png
 !/demo/pet-left.png
 !/demo/pet-right.png

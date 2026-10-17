@@ -16,10 +16,10 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var listeningMode: ResponseMode?
     private var audioFailure: AudioCaptureFailure?
     private let stateMachine = PetInputStateMachine()
-    private let cache = PetFrameCache()
+    private let cache: PetFrameCache
     private let renderer = PetRenderer()
     /// File scanning and image decoding share one background serial queue.
-    private let backgroundQueue = DispatchQueue(label: "keypet.background")
+    private let backgroundQueue: DispatchQueue
     private let library: PetLibrary
     private var windowController: PetWindowController!
     private var playback: PetPlaybackController!
@@ -48,8 +48,12 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusText: String?
     private var active = false
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard,
+         cache: PetFrameCache = PetFrameCache(),
+         backgroundQueue: DispatchQueue = DispatchQueue(label: "keypet.background")) {
         preferences = PreferencesStore(defaults: defaults)
+        self.cache = cache
+        self.backgroundQueue = backgroundQueue
         library = PetLibrary(defaults: defaults, scanQueue: backgroundQueue)
         super.init()
     }
@@ -154,10 +158,14 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 enterDegraded(reason: L10n.petUnavailable.format(current.id))
             }
         } else if !library.pets.isEmpty {
-            // First valid selection: restore the last choice, else the first
-            // pet in sorted order.
-            let restored = preferences.currentPetID.flatMap { id in library.pets.first(where: { $0.id == id }) }
-            switchPet(to: (restored ?? library.pets[0]).id)
+            // Incomplete directories stay in the menu, but must not prevent
+            // another pet from being selected automatically.
+            let restored = preferences.currentPetID.flatMap { id in
+                library.pets.first { $0.id == id && !isBlocking(id: $0.id) }
+            }
+            if let candidate = restored ?? library.pets.first(where: { !isBlocking(id: $0.id) }) {
+                switchPet(to: candidate.id)
+            }
         }
         refreshMenu()
     }
@@ -709,11 +717,20 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         panel.message = L10n.chooseRootMessage.text
         NSApplication.shared.activate(ignoringOtherApps: true)
         guard panel.runModal() == .OK, let url = panel.url else { return }
+        setLibraryRoot(url)
+    }
+
+    func setLibraryRoot(_ url: URL) {
         statusText = nil
         if library.rootURL != url.standardizedFileURL {
             switchGeneration &+= 1
             currentPet = nil
             updateActivity()
+            cache.byteBudget = PetResourceLimits.imageCacheByteBudget
+            // Old warmups can still write frames. Clear after those jobs and
+            // before setRoot enqueues the new scan on this same serial queue.
+            let cache = self.cache
+            backgroundQueue.async { cache.removeAll() }
         }
         library.setRoot(url)
     }
@@ -743,8 +760,11 @@ final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         alert.messageText = "KeyPet \(version)"
         alert.informativeText = L10n.aboutMessage.text
         alert.addButton(withTitle: L10n.ok.text)
+        alert.addButton(withTitle: L10n.viewOnGitHub.text)
         NSApplication.shared.activate(ignoringOtherApps: true)
-        alert.runModal()
+        if alert.runModal() == .alertSecondButtonReturn {
+            NSWorkspace.shared.open(URL(string: "https://github.com/micromacer/KeyPet")!)
+        }
     }
     @objc private func quit() { NSApplication.shared.terminate(nil) }
 

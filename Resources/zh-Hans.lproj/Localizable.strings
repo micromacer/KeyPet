@@ -36,6 +36,7 @@
 "permissionLater" = "稍后";
 "permissionMissing" = "尚未检测到输入监控授权。请在「系统设置 → 隐私与安全性 → 输入监控」中打开 KeyPet，再点击「已授权，继续」。如果系统要求退出并重新打开应用，请按系统提示操作。";
 "aboutMessage" = "按下键盘时显示对应动作的桌宠。\n\nBy Micromacer";
+"viewOnGitHub" = "在 GitHub 上查看";
 "ok" = "好";
 "cancel" = "取消";
 "restoreTitle" = "是否要将所有选项恢复为默认值？";

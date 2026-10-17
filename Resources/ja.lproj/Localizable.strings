@@ -36,6 +36,7 @@
 "permissionLater" = "あとで";
 "permissionMissing" = "入力監視へのアクセス許可を確認できませんでした。「システム設定 → プライバシーとセキュリティ → 入力監視」でKeyPetをオンにしてから、「許可したので続行」をクリックしてください。アプリの終了と再起動を求められた場合は、macOSの指示に従ってください。";
 "aboutMessage" = "キー入力に合わせて動くデスクトップペットです。\n\nBy Micromacer";
+"viewOnGitHub" = "GitHubで見る";
 "ok" = "OK";
 "cancel" = "キャンセル";
 "restoreTitle" = "すべてのオプションを初期設定に戻しますか？";
